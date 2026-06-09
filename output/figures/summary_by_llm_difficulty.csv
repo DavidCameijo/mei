@@ -1,0 +1,10 @@
+llm,difficulty,problems_evaluated,solutions_evaluated,success_rate
+chatgptv5.5,Easy,10,10,90.0
+chatgptv5.5,Hard,10,10,50.0
+chatgptv5.5,Medium,10,10,80.0
+claude_sonnet_4_6,Easy,10,10,100.0
+claude_sonnet_4_6,Hard,10,10,60.0
+claude_sonnet_4_6,Medium,10,10,90.0
+gemini_v3_flash,Easy,10,10,80.0
+gemini_v3_flash,Hard,10,10,70.0
+gemini_v3_flash,Medium,10,10,80.0
