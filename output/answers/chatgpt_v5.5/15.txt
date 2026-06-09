@@ -1,0 +1,20 @@
+class Solution:
+    def longestArithSeqLength(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [{} for _ in range(n)]
+        ans = 2
+
+        for i in range(n):
+            for j in range(i):
+                diff = nums[i] - nums[j]
+                prev = dp[j].get(diff, 1)
+                curr = prev + 1
+                if diff in dp[i]:
+                    if curr > dp[i][diff]:
+                        dp[i][diff] = curr
+                else:
+                    dp[i][diff] = curr
+                if dp[i][diff] > ans:
+                    ans = dp[i][diff]
+
+        return ans

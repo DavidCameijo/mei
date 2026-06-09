@@ -1,0 +1,41 @@
+class Solution:
+    def stringCount(self, n: int) -> int:
+        MOD = 10**9 + 7
+
+        def modexp(a, e):
+            r = 1
+            while e:
+                if e & 1:
+                    r = r * a % MOD
+                a = a * a % MOD
+                e >>= 1
+            return r
+
+        def mul(a, b):
+            return a * b % MOD
+
+        pow26 = modexp(26, n)
+        pow25 = modexp(25, n)
+        pow24 = modexp(24, n)
+        pow23 = modexp(23, n)
+
+        pow25_n1 = modexp(25, n - 1) if n > 0 else 0
+        pow24_n1 = modexp(24, n - 1) if n > 0 else 0
+        pow23_n1 = modexp(23, n - 1) if n > 0 else 0
+
+        E = (pow25 + n * pow25_n1) % MOD
+        L = pow25
+        T = pow25
+
+        EL = (pow24 + n * pow24_n1) % MOD
+        ET = EL
+        LT = pow24
+
+        ELT = (pow23 + n * pow23_n1) % MOD
+
+        bad = (3 * pow25 + n * pow25_n1) % MOD
+        bad = (bad - (3 * pow24 + 2 * n * pow24_n1)) % MOD
+        bad = (bad + (pow23 + n * pow23_n1)) % MOD
+
+        good = (pow26 - bad) % MOD
+        return good

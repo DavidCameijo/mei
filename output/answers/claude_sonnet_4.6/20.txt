@@ -1,0 +1,25 @@
+from typing import List
+import bisect
+from collections import defaultdict
+
+class Solution:
+    def countRectangles(self, rectangles: List[List[int]], points: List[List[int]]) -> List[int]:
+        height_to_lengths = defaultdict(list)
+        for l, h in rectangles:
+            height_to_lengths[h].append(l)
+        for h in height_to_lengths:
+            height_to_lengths[h].sort()
+        
+        heights = sorted(height_to_lengths.keys())
+        
+        result = []
+        for x, y in points:
+            count = 0
+            for h in heights:
+                if h < y:
+                    continue
+                lengths = height_to_lengths[h]
+                idx = bisect.bisect_left(lengths, x)
+                count += len(lengths) - idx
+            result.append(count)
+        return result

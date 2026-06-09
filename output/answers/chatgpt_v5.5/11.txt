@@ -1,0 +1,13 @@
+class Solution:
+    def champagneTower(self, poured: int, query_row: int, query_glass: int) -> float:
+        dp = [0.0] * 101
+        dp[0] = float(poured)
+        for r in range(query_row):
+            next_dp = [0.0] * 101
+            for c in range(r + 1):
+                if dp[c] > 1:
+                    excess = (dp[c] - 1) / 2.0
+                    next_dp[c] += excess
+                    next_dp[c + 1] += excess
+            dp = next_dp
+        return min(1.0, dp[query_glass])

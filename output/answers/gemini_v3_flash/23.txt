@@ -1,0 +1,66 @@
+import collections
+import re
+
+class Solution:
+    def findMinStep(self, board: str, hand: str) -> int:
+        def clean(s):
+            n = len(s)
+            res = ""
+            i = 0
+            while i < n:
+                j = i
+                while j < n and s[j] == s[i]:
+                    j += 1
+                if j - i < 3:
+                    res += s[i:j]
+                else:
+                    return clean(res + s[j:])
+                i = j
+            return res
+
+        hand_counts = collections.Counter(hand)
+        memo = {}
+
+        def dfs(curr_board, curr_hand):
+            curr_board = clean(curr_board)
+            if not curr_board:
+                return 0
+            
+            state = (curr_board, tuple(sorted(curr_hand.items())))
+            if state in memo:
+                return memo[state]
+            
+            res = float('inf')
+            i = 0
+            while i < len(curr_board):
+                j = i
+                while j < len(curr_board) and curr_board[j] == curr_board[i]:
+                    j += 1
+                
+                color = curr_board[i]
+                needed = 3 - (j - i)
+                
+                if curr_hand[color] >= needed:
+                    curr_hand[color] -= needed
+                    temp_res = dfs(curr_board[:i] + curr_board[j:], curr_hand)
+                    if temp_res != -1:
+                        res = min(res, needed + temp_res)
+                    curr_hand[color] += needed
+                
+                if j - i == 1 and curr_hand[color] >= 1:
+                    for other_color in curr_hand:
+                        if other_color != color and curr_hand[other_color] >= 1:
+                            curr_hand[other_color] -= 1
+                            temp_board = curr_board[:i] + color + other_color + curr_board[i] + curr_board[i+1:]
+                            temp_res = dfs(temp_board, curr_hand)
+                            if temp_res != -1:
+                                res = min(res, 1 + temp_res)
+                            curr_hand[other_color] += 1
+                
+                i = j
+            
+            memo[state] = res if res != float('inf') else -1
+            return memo[state]
+
+        result = dfs(board, hand_counts)
+        return result

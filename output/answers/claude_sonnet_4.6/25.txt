@@ -1,0 +1,37 @@
+class Solution:
+    def longestDupSubstring(self, s: str) -> str:
+        n = len(s)
+        MOD = (1 << 61) - 1
+        BASE = 31
+        
+        def check(length):
+            h = 0
+            power = 1
+            for i in range(length):
+                h = (h * BASE + ord(s[i]) - ord('a') + 1) % MOD
+                if i < length - 1:
+                    power = power * BASE % MOD
+            seen = {h: [0]}
+            for i in range(1, n - length + 1):
+                h = (h - (ord(s[i-1]) - ord('a') + 1) * power) % MOD
+                h = (h * BASE + ord(s[i + length - 1]) - ord('a') + 1) % MOD
+                if h in seen:
+                    for start in seen[h]:
+                        if s[start:start+length] == s[i:i+length]:
+                            return i
+                    seen[h].append(i)
+                else:
+                    seen[h] = [i]
+            return -1
+        
+        lo, hi = 0, n - 1
+        result = ""
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            idx = check(mid)
+            if idx != -1:
+                result = s[idx:idx+mid]
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return result

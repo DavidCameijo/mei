@@ -1,0 +1,71 @@
+class Solution:
+    def findMinStep(self, board: str, hand: str) -> int:
+        from functools import lru_cache
+        from collections import Counter
+
+        colors = "RYBGW"
+        idx = {c: i for i, c in enumerate(colors)}
+
+        hand_count = [0] * 5
+        for c in hand:
+            hand_count[idx[c]] += 1
+
+        def shrink(s):
+            changed = True
+            while changed:
+                changed = False
+                i = 0
+                res = []
+                while i < len(s):
+                    j = i
+                    while j < len(s) and s[j] == s[i]:
+                        j += 1
+                    if j - i >= 3:
+                        changed = True
+                    else:
+                        res.append(s[i:j])
+                    i = j
+                s = "".join(res)
+            return s
+
+        INF = 10**9
+
+        @lru_cache(None)
+        def dfs(s, r, y, b, g, w):
+            hand = [r, y, b, g, w]
+            if not s:
+                return 0
+
+            best = INF
+            i = 0
+            n = len(s)
+
+            while i < n:
+                j = i
+                while j < n and s[j] == s[i]:
+                    j += 1
+
+                c = s[i]
+                k = j - i
+                need = 3 - k
+                ci = idx[c]
+
+                if need <= 0:
+                    i = j
+                    continue
+
+                if hand[ci] >= need:
+                    new_hand = hand[:]
+                    new_hand[ci] -= need
+                    new_s = s[:i] + s[j:]
+                    new_s = shrink(new_s)
+                    res = dfs(new_s, *new_hand)
+                    if res != INF:
+                        best = min(best, res + need)
+
+                i = j
+
+            return best
+
+        ans = dfs(board, *hand_count)
+        return -1 if ans == INF else ans

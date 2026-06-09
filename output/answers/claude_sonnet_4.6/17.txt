@@ -1,0 +1,19 @@
+from typing import List
+
+class Solution:
+    def getMaxLen(self, nums: List[int]) -> int:
+        pos = 0  # length of longest subarray ending here with positive product
+        neg = 0  # length of longest subarray ending here with negative product
+        res = 0
+        
+        for n in nums:
+            if n == 0:
+                pos = neg = 0
+            elif n > 0:
+                pos = pos + 1
+                neg = neg + 1 if neg > 0 else 0
+            else:
+                pos, neg = (neg + 1 if neg > 0 else 0), pos + 1
+            res = max(res, pos)
+        
+        return res

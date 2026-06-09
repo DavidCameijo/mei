@@ -1,0 +1,26 @@
+class Solution:
+    def nonSpecialCount(self, l: int, r: int) -> int:
+        import math
+        
+        n = int(math.isqrt(r))
+        sieve = [True] * (n + 1)
+        if n >= 0:
+            sieve[0] = False
+        if n >= 1:
+            sieve[1] = False
+        
+        for i in range(2, int(n ** 0.5) + 1):
+            if sieve[i]:
+                step = i
+                start = i * i
+                for j in range(start, n + 1, step):
+                    sieve[j] = False
+        
+        count_special = 0
+        for i in range(2, n + 1):
+            if sieve[i]:
+                sq = i * i
+                if l <= sq <= r:
+                    count_special += 1
+        
+        return (r - l + 1) - count_special

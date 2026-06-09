@@ -1,0 +1,38 @@
+import heapq
+
+class Solution:
+    def findAnswer(self, n: int, edges: list[list[int]]) -> list[bool]:
+        adj = [[] for _ in range(n)]
+        for i, (u, v, w) in enumerate(edges):
+            adj[u].append((v, w, i))
+            adj[v].append((u, w, i))
+        
+        def dijkstra(start_node):
+            dist = [float('inf')] * n
+            dist[start_node] = 0
+            pq = [(0, start_node)]
+            while pq:
+                d, u = heapq.heappop(pq)
+                if d > dist[u]:
+                    continue
+                for v, w, i in adj[u]:
+                    if dist[u] + w < dist[v]:
+                        dist[v] = dist[u] + w
+                        heapq.heappush(pq, (dist[v], v))
+            return dist
+        
+        dist_from_0 = dijkstra(0)
+        dist_from_n = dijkstra(n - 1)
+        
+        shortest_path_len = dist_from_0[n - 1]
+        
+        if shortest_path_len == float('inf'):
+            return [False] * len(edges)
+        
+        ans = [False] * len(edges)
+        for i, (u, v, w) in enumerate(edges):
+            if (dist_from_0[u] + w + dist_from_n[v] == shortest_path_len) or \
+               (dist_from_0[v] + w + dist_from_n[u] == shortest_path_len):
+                ans[i] = True
+                
+        return ans

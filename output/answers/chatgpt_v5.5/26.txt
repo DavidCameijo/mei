@@ -1,0 +1,40 @@
+from typing import List
+import heapq
+import math
+
+class Solution:
+    def findAnswer(self, n: int, edges: List[List[int]]) -> List[bool]:
+        adj = [[] for _ in range(n)]
+        for u, v, w in edges:
+            adj[u].append((v, w))
+            adj[v].append((u, w))
+        
+        def dijkstra(src):
+            dist = [math.inf] * n
+            dist[src] = 0
+            pq = [(0, src)]
+            while pq:
+                d, u = heapq.heappop(pq)
+                if d != dist[u]:
+                    continue
+                for v, w in adj[u]:
+                    nd = d + w
+                    if nd < dist[v]:
+                        dist[v] = nd
+                        heapq.heappush(pq, (nd, v))
+            return dist
+        
+        dist0 = dijkstra(0)
+        distn = dijkstra(n - 1)
+        
+        if dist0[n - 1] == math.inf:
+            return [False] * len(edges)
+        
+        target = dist0[n - 1]
+        ans = [False] * len(edges)
+        
+        for i, (u, v, w) in enumerate(edges):
+            if dist0[u] + w + distn[v] == target or dist0[v] + w + distn[u] == target:
+                ans[i] = True
+        
+        return ans

@@ -1,0 +1,16 @@
+You are an expert Python programmer.
+
+Your task is to solve the coding problem below using Python 3.
+Follow the provided starter code exactly.
+Return only the Python solution code. Do not include explanations, comments, or markdown.
+
+Problem description:
+{problem_description}
+
+Starter code:
+{starter_code}
+
+Requirements:
+- Preserve the function/class signature.
+- Use only standard Python libraries unless the starter code already imports something.
+- Return only the final code.

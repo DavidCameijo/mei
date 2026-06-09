@@ -1,0 +1,13 @@
+class Solution:
+    def nonSpecialCount(self, l: int, r: int) -> int:
+        import math
+        # Special numbers are squares of primes (p^2 has exactly 2 proper divisors: 1 and p)
+        limit = int(math.isqrt(r))
+        sieve = list(range(limit + 1))
+        for i in range(2, int(math.isqrt(limit)) + 1):
+            if sieve[i] == i:
+                for j in range(i*i, limit + 1, i):
+                    if sieve[j] == j:
+                        sieve[j] = i
+        special = sum(1 for p in range(2, limit + 1) if sieve[p] == p and l <= p*p <= r)
+        return (r - l + 1) - special

@@ -1,0 +1,45 @@
+class Solution:
+    def stringCount(self, n: int) -> int:
+        MOD = 10**9 + 7
+        
+        # Total strings of length n with lowercase letters
+        total = pow(26, n, MOD)
+        
+        # Use inclusion-exclusion to subtract strings that cannot contain "leet"
+        # A string can be rearranged to contain "leet" if it has:
+        # at least 1 'l', at least 2 'e', at least 1 't'
+        
+        # Let A = strings missing at least one 'l' (0 l's)
+        # Let B = strings missing at least one 'e' pair (0 or 1 e's)
+        # Let C = strings missing at least one 't' (0 t's)
+        
+        # |A| = 25^n (no 'l')
+        # |B| = 25^n + n*24^n (0 e's: 25^n, exactly 1 e: C(n,1)*24^(n-1)*... wait
+        # B = strings with fewer than 2 e's = strings with 0 e's + strings with exactly 1 e
+        # 0 e's: 25^n
+        # exactly 1 e: n * 25^(n-1)
+        
+        # |A| = 25^n
+        # |B| = 25^n + n*25^(n-1)
+        # |C| = 25^n
+        
+        # |A∩B| = 24^n + n*24^(n-1)  (no l, <2 e's)
+        # |A∩C| = 24^n  (no l, no t)
+        # |B∩C| = 24^n + n*24^(n-1)  (no t, <2 e's)
+        # |A∩B∩C| = 23^n + n*23^(n-1)  (no l, no t, <2 e's)
+        
+        # bad = |A| + |B| + |C| - |A∩B| - |A∩C| - |B∩C| + |A∩B∩C|
+        
+        A = pow(25, n, MOD)
+        B = (pow(25, n, MOD) + n * pow(25, n-1, MOD)) % MOD
+        C = pow(25, n, MOD)
+        
+        AB = (pow(24, n, MOD) + n * pow(24, n-1, MOD)) % MOD
+        AC = pow(24, n, MOD)
+        BC = (pow(24, n, MOD) + n * pow(24, n-1, MOD)) % MOD
+        
+        ABC = (pow(23, n, MOD) + n * pow(23, n-1, MOD)) % MOD
+        
+        bad = (A + B + C - AB - AC - BC + ABC) % MOD
+        
+        return (total - bad) % MOD

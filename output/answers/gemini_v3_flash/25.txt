@@ -1,0 +1,35 @@
+class Solution:
+    def longestDupSubstring(self, s: str) -> str:
+        n = len(s)
+        nums = [ord(c) - ord('a') for c in s]
+        mod = (1 << 61) - 1
+        base = 31
+
+        def check(length):
+            if length == 0:
+                return ""
+            h = 0
+            for i in range(length):
+                h = (h * base + nums[i]) % mod
+            
+            seen = {h}
+            pow_base = pow(base, length, mod)
+            
+            for i in range(length, n):
+                h = (h * base - nums[i - length] * pow_base + nums[i]) % mod
+                if h in seen:
+                    return s[i - length + 1: i + 1]
+                seen.add(h)
+            return ""
+
+        low, high = 0, n - 1
+        res = ""
+        while low <= high:
+            mid = (low + high) // 2
+            candidate = check(mid)
+            if candidate:
+                res = candidate
+                low = mid + 1
+            else:
+                high = mid - 1
+        return res

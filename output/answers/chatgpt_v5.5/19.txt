@@ -1,0 +1,26 @@
+class Solution:
+    def maxPotholes(self, road: str, budget: int) -> int:
+        runs = []
+        n = len(road)
+        i = 0
+        
+        while i < n:
+            if road[i] == 'x':
+                j = i
+                while j < n and road[j] == 'x':
+                    j += 1
+                runs.append(j - i)
+                i = j
+            else:
+                i += 1
+        
+        runs.sort(reverse=True)
+        
+        res = 0
+        for k in runs:
+            cost = k + 1
+            if cost <= budget:
+                budget -= cost
+                res += k
+        
+        return res

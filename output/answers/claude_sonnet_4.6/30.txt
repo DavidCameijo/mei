@@ -1,0 +1,26 @@
+class Solution:
+    def nearestPalindromic(self, n: str) -> str:
+        length = len(n)
+        num = int(n)
+        
+        candidates = set()
+        
+        # Edge cases: 10...0 - 1 = 9...9 and 10...01
+        candidates.add(10 ** (length - 1) - 1)
+        candidates.add(10 ** length + 1)
+        
+        # Mirror the first half
+        prefix = int(n[:(length + 1) // 2])
+        
+        for delta in [-1, 0, 1]:
+            p = prefix + delta
+            p_str = str(p)
+            if length % 2 == 0:
+                palindrome = p_str + p_str[::-1]
+            else:
+                palindrome = p_str + p_str[-2::-1]
+            candidates.add(int(palindrome))
+        
+        candidates.discard(num)
+        
+        return str(min(candidates, key=lambda x: (abs(x - num), x)))

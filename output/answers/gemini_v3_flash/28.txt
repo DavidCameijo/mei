@@ -1,0 +1,30 @@
+class Solution:
+    def splitArraySameAverage(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if n == 1:
+            return False
+        
+        total_sum = sum(nums)
+        m = n // 2
+        
+        left_sums = [set() for _ in range(m + 1)]
+        left_sums[0].add(0)
+        for x in nums[:m]:
+            for i in range(m - 1, -1, -1):
+                for s in left_sums[i]:
+                    left_sums[i + 1].add(s + x)
+                    
+        right_sums = [set() for _ in range(n - m + 1)]
+        right_sums[0].add(0)
+        for x in nums[m:]:
+            for i in range(n - m - 1, -1, -1):
+                for s in right_sums[i]:
+                    right_sums[i + 1].add(s + x)
+                    
+        for k in range(1, n):
+            if (total_sum * k) % n == 0:
+                target = (total_sum * k) // n
+                for i in range(max(0, k - (n - m)), min(k, m) + 1):
+                    if any((target - s) in right_sums[k - i] for s in left_sums[i]):
+                        return True
+        return False

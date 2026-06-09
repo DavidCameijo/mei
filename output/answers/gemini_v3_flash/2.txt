@@ -1,0 +1,8 @@
+import bisect
+
+class Solution:
+    def isMajorityElement(self, nums: List[int], target: int) -> bool:
+        n = len(nums)
+        left = bisect.bisect_left(nums, target)
+        right = bisect.bisect_right(nums, target)
+        return (right - left) > n // 2

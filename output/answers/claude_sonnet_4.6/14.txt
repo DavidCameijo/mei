@@ -1,0 +1,11 @@
+from typing import List
+from collections import defaultdict
+
+class Solution:
+    def findWinners(self, matches: List[List[int]]) -> List[List[int]]:
+        losses = defaultdict(int)
+        for w, l in matches:
+            if w not in losses:
+                losses[w] = 0
+            losses[l] += 1
+        return [sorted(p for p, c in losses.items() if c == 0), sorted(p for p, c in losses.items() if c == 1)]

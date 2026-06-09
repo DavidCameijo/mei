@@ -1,0 +1,25 @@
+class Solution:
+    def stringCount(self, n: int) -> int:
+        if n < 4:
+            return 0
+        
+        mod = 10**9 + 7
+        
+        def power(a, b):
+            return pow(a, b, mod)
+        
+        total = power(26, n)
+        
+        c1 = power(25, n)
+        c2 = power(25, n)
+        c3 = (power(25, n) + n * power(25, n - 1)) % mod
+        
+        c12 = power(24, n)
+        c13 = (power(24, n) + n * power(24, n - 1)) % mod
+        c23 = (power(24, n) + n * power(24, n - 1)) % mod
+        
+        c123 = (power(23, n) + n * power(23, n - 1)) % mod
+        
+        bad = (c1 + c2 + c3 - c12 - c13 - c23 + c123) % mod
+        
+        return (total - bad + mod) % mod

@@ -1,0 +1,60 @@
+from typing import List
+from itertools import accumulate
+
+class Solution:
+    def minimumMoves(self, nums: List[int], k: int, maxChanges: int) -> int:
+        n = len(nums)
+        ones = [i for i, x in enumerate(nums) if x == 1]
+        total_ones = len(ones)
+        
+        # prefix sum for ones positions
+        prefix = [0] + list(accumulate(ones))
+        
+        def sum_ones(l, r):
+            # sum of ones positions in index range [l, r] of ones array
+            return prefix[r+1] - prefix[l]
+        
+        def cost(center, l, r):
+            # cost to bring ones[l..r] to center position
+            mid = (l + r) // 2
+            left_count = mid - l + 1
+            right_count = r - mid
+            left_cost = center * left_count - sum_ones(l, mid)
+            right_cost = sum_ones(mid+1, r) - center * right_count
+            return left_cost + right_cost
+        
+        ans = float('inf')
+        
+        # We pick 'use' ones directly (0 <= use <= min(total_ones, k))
+        # and get (k - use) from maxChanges (each costs 2 moves)
+        # but we can only use min(maxChanges, k) from changes
+        
+        for aliceIndex in range(n):
+            # Try each position as alice's starting position
+            # But this is O(n * something), need smarter approach
+            pass
+        
+        # Better: iterate over how many real ones we use (from k down to max(0, k-maxChanges))
+        # For each count of real ones 'use', slide a window of size 'use' over ones array
+        # cost = sum of |ones[i] - aliceIndex| + 2*(k-use)
+        # aliceIndex should be the median of the window
+        
+        for use in range(max(0, k - maxChanges), k + 1):
+            if use > total_ones:
+                break
+            change_cost = 2 * (k - use)
+            
+            if use == 0:
+                ans = min(ans, change_cost)
+                continue
+            
+            # slide window of size 'use' over ones
+            # for window [l, l+use-1], best aliceIndex is ones[mid]
+            for l in range(total_ones - use + 1):
+                r = l + use - 1
+                mid = (l + r) // 2
+                alice = ones[mid]
+                c = cost(alice, l, r) + change_cost
+                ans = min(ans, c)
+        
+        return ans

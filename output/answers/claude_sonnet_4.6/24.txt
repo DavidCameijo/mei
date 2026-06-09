@@ -1,0 +1,25 @@
+from typing import List
+import heapq
+
+class Solution:
+    def findShortestWay(self, maze: List[List[int]], ball: List[int], hole: List[int]) -> str:
+        m, n = len(maze), len(maze[0])
+        heap = [(0, "", ball[0], ball[1])]
+        visited = {}
+        dirs = [('d',1,0),('l',0,-1),('r',0,1),('u',-1,0)]
+        
+        while heap:
+            dist, path, r, c = heapq.heappop(heap)
+            if [r,c] == hole:
+                return path
+            if (r,c) in visited:
+                continue
+            visited[(r,c)] = True
+            for d, dr, dc in dirs:
+                nr, nc, nd = r, c, dist
+                while 0<=nr+dr<m and 0<=nc+dc<n and maze[nr+dr][nc+dc]==0:
+                    nr+=dr; nc+=dc; nd+=1
+                    if [nr,nc]==hole: break
+                if (nr,nc) not in visited:
+                    heapq.heappush(heap,(nd,path+d,nr,nc))
+        return "impossible"

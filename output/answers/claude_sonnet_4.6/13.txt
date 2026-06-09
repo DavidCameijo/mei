@@ -1,0 +1,30 @@
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def doubleIt(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        def reverse(node):
+            prev = None
+            curr = node
+            while curr:
+                nxt = curr.next
+                curr.next = prev
+                prev = curr
+                curr = nxt
+            return prev
+        
+        head = reverse(head)
+        carry = 0
+        curr = head
+        prev = None
+        while curr:
+            val = curr.val * 2 + carry
+            carry = val // 10
+            curr.val = val % 10
+            prev = curr
+            curr = curr.next
+        if carry:
+            prev.next = ListNode(carry)
+        return reverse(head)

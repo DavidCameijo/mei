@@ -1,0 +1,31 @@
+class Solution:
+    def nearestPalindromic(self, n: str) -> str:
+        length = len(n)
+        val = int(n)
+        candidates = set()
+        
+        candidates.add(10**(length - 1) - 1)
+        candidates.add(10**length + 1)
+        
+        prefix = int(n[:(length + 1) // 2])
+        for i in [-1, 0, 1]:
+            p = str(prefix + i)
+            if length % 2 == 0:
+                res = p + p[::-1]
+            else:
+                res = p + p[:-1][::-1]
+            candidates.add(int(res))
+        
+        if val in candidates:
+            candidates.remove(val)
+            
+        ans = -1
+        for candidate in candidates:
+            if ans == -1:
+                ans = candidate
+            elif abs(candidate - val) < abs(ans - val):
+                ans = candidate
+            elif abs(candidate - val) == abs(ans - val):
+                ans = min(ans, candidate)
+                
+        return str(ans)

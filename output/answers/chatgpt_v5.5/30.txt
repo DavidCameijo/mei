@@ -1,0 +1,42 @@
+class Solution:
+    def nearestPalindromic(self, n: str) -> str:
+        L = len(n)
+        num = int(n)
+
+        def make_pal(prefix, odd):
+            s = str(prefix)
+            if odd:
+                return int(s + s[-2::-1])
+            return int(s + s[::-1])
+
+        candidates = set()
+
+        if L == 1:
+            candidates.add(0)
+            candidates.add(1)
+            candidates.add(2)
+        else:
+            candidates.add(10 ** (L - 1) - 1)
+            candidates.add(10 ** L + 1)
+
+            prefix_len = (L + 1) // 2
+            prefix = int(n[:prefix_len])
+
+            for d in (-1, 0, 1):
+                p = prefix + d
+                if p <= 0:
+                    continue
+                candidates.add(make_pal(p, L % 2 == 1))
+
+        candidates.discard(num)
+
+        best = None
+        best_diff = float('inf')
+
+        for c in candidates:
+            diff = abs(c - num)
+            if diff < best_diff or (diff == best_diff and (best is None or c < best)):
+                best_diff = diff
+                best = c
+
+        return str(best)

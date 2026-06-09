@@ -1,0 +1,121 @@
+from typing import List
+import heapq
+
+class Solution:
+    def minimumMoves(self, nums: List[int], k: int, maxChanges: int) -> int:
+        ones = [i for i, v in enumerate(nums) if v == 1]
+        t = len(ones)
+        
+        if k <= t:
+            lo = []
+            hi = []
+            sum_lo = 0
+            sum_hi = 0
+            
+            def add(x):
+                nonlocal sum_lo, sum_hi
+                if not lo or x <= -lo[0]:
+                    heapq.heappush(lo, -x)
+                    sum_lo += x
+                else:
+                    heapq.heappush(hi, x)
+                    sum_hi += x
+            
+            def rebalance():
+                nonlocal sum_lo, sum_hi
+                if len(lo) > len(hi) + 1:
+                    x = -heapq.heappop(lo)
+                    sum_lo -= x
+                    heapq.heappush(hi, x)
+                    sum_hi += x
+                elif len(hi) > len(lo):
+                    x = heapq.heappop(hi)
+                    sum_hi -= x
+                    heapq.heappush(lo, -x)
+                    sum_lo += x
+            
+            def cost():
+                if not lo:
+                    return 0
+                med = -lo[0]
+                left_sz = len(lo)
+                right_sz = len(hi)
+                return med * left_sz - sum_lo + sum_hi - med * right_sz
+            
+            for i in range(k):
+                add(ones[i])
+            rebalance()
+            ans = cost()
+            
+            for i in range(k, t):
+                add(ones[i])
+                rem = ones[i - k]
+                if lo and rem <= -lo[0]:
+                    lo.remove(-rem)
+                    heapq.heapify(lo)
+                    sum_lo -= rem
+                else:
+                    hi.remove(rem)
+                    heapq.heapify(hi)
+                    sum_hi -= rem
+                rebalance()
+                rebalance()
+                ans = min(ans, cost())
+            
+            return ans
+        
+        extra = k - t
+        lo = []
+        hi = []
+        sum_lo = 0
+        sum_hi = 0
+        
+        def add(x):
+            nonlocal sum_lo, sum_hi
+            if not lo or x <= -lo[0]:
+                heapq.heappush(lo, -x)
+                sum_lo += x
+            else:
+                heapq.heappush(hi, x)
+                sum_hi += x
+        
+        def rebalance():
+            nonlocal sum_lo, sum_hi
+            if len(lo) > len(hi) + 1:
+                x = -heapq.heappop(lo)
+                sum_lo -= x
+                heapq.heappush(hi, x)
+                sum_hi += x
+            elif len(hi) > len(lo):
+                x = heapq.heappop(hi)
+                sum_hi -= x
+                heapq.heappush(lo, -x)
+                sum_lo += x
+        
+        def cost():
+            med = -lo[0]
+            left_sz = len(lo)
+            right_sz = len(hi)
+            return med * left_sz - sum_lo + sum_hi - med * right_sz
+        
+        for i in range(k):
+            add(ones[i])
+        rebalance()
+        ans = cost()
+        
+        for i in range(k, t):
+            add(ones[i])
+            rem = ones[i - k]
+            if rem <= -lo[0]:
+                lo.remove(-rem)
+                heapq.heapify(lo)
+                sum_lo -= rem
+            else:
+                hi.remove(rem)
+                heapq.heapify(hi)
+                sum_hi -= rem
+            rebalance()
+            rebalance()
+            ans = min(ans, cost())
+        
+        return ans + extra

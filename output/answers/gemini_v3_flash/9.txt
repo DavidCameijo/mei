@@ -1,0 +1,13 @@
+class Solution:
+    def oddCells(self, m: int, n: int, indices: List[List[int]]) -> int:
+        row_counts = [0] * m
+        col_counts = [0] * n
+        
+        for r, c in indices:
+            row_counts[r] += 1
+            col_counts[c] += 1
+            
+        odd_rows = sum(1 for r in row_counts if r % 2 == 1)
+        odd_cols = sum(1 for c in col_counts if c % 2 == 1)
+        
+        return odd_rows * (n - odd_cols) + odd_cols * (m - odd_rows)

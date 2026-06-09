@@ -1,0 +1,37 @@
+from typing import Optional
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+class Solution:
+    def doubleIt(self, head: Optional['ListNode']) -> Optional['ListNode']:
+        def reverse(node):
+            prev = None
+            cur = node
+            while cur:
+                nxt = cur.next
+                cur.next = prev
+                prev = cur
+                cur = nxt
+            return prev
+
+        head = reverse(head)
+        cur = head
+        carry = 0
+        prev = None
+
+        while cur:
+            total = cur.val * 2 + carry
+            cur.val = total % 10
+            carry = total // 10
+            prev = cur
+            cur = cur.next
+
+        if carry:
+            prev.next = ListNode(carry)
+
+        head = reverse(head)
+        return head

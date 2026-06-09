@@ -1,0 +1,22 @@
+class Solution:
+    def nonSpecialCount(self, l: int, r: int) -> int:
+        import math
+        
+        limit = int(math.isqrt(r))
+        primes = [True] * (limit + 1)
+        primes[0] = primes[1] = False
+        
+        for p in range(2, int(math.isqrt(limit)) + 1):
+            if primes[p]:
+                for i in range(p * p, limit + 1, p):
+                    primes[i] = False
+        
+        special_count = 0
+        for p in range(2, limit + 1):
+            if primes[p]:
+                square = p * p
+                if l <= square <= r:
+                    special_count += 1
+        
+        total_elements = r - l + 1
+        return total_elements - special_count

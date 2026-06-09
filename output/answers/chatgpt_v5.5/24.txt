@@ -1,0 +1,45 @@
+from typing import List
+import heapq
+
+class Solution:
+    def findShortestWay(self, maze: List[List[int]], ball: List[int], hole: List[int]) -> str:
+        m, n = len(maze), len(maze[0])
+        start = (ball[0], ball[1])
+        target = (hole[0], hole[1])
+        
+        dirs = [(-1, 0, 'u'), (1, 0, 'd'), (0, -1, 'l'), (0, 1, 'r')]
+        
+        def roll(r, c, dr, dc):
+            steps = 0
+            while 0 <= r + dr < m and 0 <= c + dc < n and maze[r + dr][c + dc] == 0:
+                r += dr
+                c += dc
+                steps += 1
+                if (r, c) == target:
+                    break
+            return r, c, steps
+        
+        heap = [(0, "", start[0], start[1])]
+        dist_map = {start: (0, "")}
+        
+        while heap:
+            dist, path, r, c = heapq.heappop(heap)
+            
+            if (r, c) == target:
+                return path
+            
+            if dist > dist_map.get((r, c), (float('inf'), "") )[0]:
+                continue
+            
+            for dr, dc, ch in dirs:
+                nr, nc, steps = roll(r, c, dr, dc)
+                if steps == 0:
+                    continue
+                nd = dist + steps
+                np = path + ch
+                
+                if (nr, nc) not in dist_map or nd < dist_map[(nr, nc)][0] or (nd == dist_map[(nr, nc)][0] and np < dist_map[(nr, nc)][1]):
+                    dist_map[(nr, nc)] = (nd, np)
+                    heapq.heappush(heap, (nd, np, nr, nc))
+        
+        return "impossible"

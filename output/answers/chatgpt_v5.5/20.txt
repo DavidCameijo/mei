@@ -1,0 +1,21 @@
+from typing import List
+import bisect
+
+class Solution:
+    def countRectangles(self, rectangles: List[List[int]], points: List[List[int]]) -> List[int]:
+        rect_by_h = [[] for _ in range(101)]
+        for l, h in rectangles:
+            rect_by_h[h].append(l)
+        
+        S = [[] for _ in range(102)]
+        
+        for h in range(100, 0, -1):
+            S[h] = S[h + 1] + rect_by_h[h]
+            S[h].sort()
+        
+        res = []
+        for x, y in points:
+            arr = S[y]
+            res.append(len(arr) - bisect.bisect_left(arr, x))
+        
+        return res

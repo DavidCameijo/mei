@@ -1,0 +1,32 @@
+import heapq
+from collections import defaultdict
+from typing import List
+
+class Solution:
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start_node: int, end_node: int) -> float:
+        graph = defaultdict(list)
+        for i, (u, v) in enumerate(edges):
+            graph[u].append((v, succProb[i]))
+            graph[v].append((u, succProb[i]))
+        
+        max_prob = [0.0] * n
+        max_prob[start_node] = 1.0
+        
+        pq = [(-1.0, start_node)]
+        
+        while pq:
+            curr_prob, u = heapq.heappop(pq)
+            curr_prob = -curr_prob
+            
+            if u == end_node:
+                return curr_prob
+            
+            if curr_prob < max_prob[u]:
+                continue
+                
+            for v, prob in graph[u]:
+                if max_prob[u] * prob > max_prob[v]:
+                    max_prob[v] = max_prob[u] * prob
+                    heapq.heappush(pq, (-max_prob[v], v))
+                    
+        return 0.0

@@ -1,0 +1,23 @@
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def gameResult(self, head: Optional[ListNode]) -> str:
+        even_points = 0
+        odd_points = 0
+        
+        curr = head
+        while curr and curr.next:
+            if curr.val > curr.next.val:
+                even_points += 1
+            elif curr.val < curr.next.val:
+                odd_points += 1
+            curr = curr.next.next
+        
+        if even_points > odd_points:
+            return "Even"
+        if odd_points > even_points:
+            return "Odd"
+        return "Tie"

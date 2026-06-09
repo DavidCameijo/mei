@@ -1,0 +1,38 @@
+import heapq
+
+class Solution:
+    def findShortestWay(self, maze: List[List[int]], ball: List[int], hole: List[int]) -> str:
+        m, n = len(maze), len(maze[0])
+        hole = tuple(hole)
+        # pq stores (distance, path_string, r, c)
+        pq = [(0, "", ball[0], ball[1])]
+        # visited stores (distance, path_string) for each cell
+        visited = {}
+
+        while pq:
+            dist, path, r, c = heapq.heappop(pq)
+            
+            if (r, c) in visited and (dist, path) >= visited[(r, c)]:
+                continue
+            visited[(r, c)] = (dist, path)
+            
+            if (r, c) == hole:
+                return path
+            
+            for dr, dc, direction in [(1, 0, 'd'), (0, -1, 'l'), (0, 1, 'r'), (-1, 0, 'u')]:
+                nr, nc, step = r, c, 0
+                
+                while 0 <= nr + dr < m and 0 <= nc + dc < n and maze[nr + dr][nc + dc] == 0:
+                    nr += dr
+                    nc += dc
+                    step += 1
+                    if (nr, nc) == hole:
+                        break
+                
+                new_dist = dist + step
+                new_path = path + direction
+                
+                if (nr, nc) not in visited or (new_dist, new_path) < visited[(nr, nc)]:
+                    heapq.heappush(pq, (new_dist, new_path, nr, nc))
+                    
+        return "impossible"

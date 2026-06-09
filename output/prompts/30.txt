@@ -1,0 +1,40 @@
+You are an expert Python programmer.
+Return ONLY ready-to-paste code inside a single fenced code block.
+Your task is to solve the coding problem below using Python 3.
+Follow the provided starter code exactly.
+Return only the final code. Do not include explanations, comments, or markdown.
+
+Problem description:
+Given a string n representing an integer, return the closest integer (not including itself), which is a palindrome. If there is a tie, return the smaller one.
+The closest is defined as the absolute difference minimized between two integers.
+ 
+Example 1:
+
+Input: n = "123"
+Output: "121"
+
+Example 2:
+
+Input: n = "1"
+Output: "0"
+Explanation: 0 and 2 are the closest palindromes but we return the smallest which is 0.
+
+ 
+Constraints:
+
+1 <= n.length <= 18
+n consists of only digits.
+n does not have leading zeros.
+n is representing an integer in the range [1, 1018 - 1].
+
+
+
+Starter code:
+class Solution:
+    def nearestPalindromic(self, n: str) -> str:
+        
+
+Requirements:
+- Preserve the function/class signature.
+- Use only standard Python libraries unless the starter code already imports something.
+- Return only the final code.

@@ -1,0 +1,23 @@
+from typing import List
+from math import comb
+
+class Solution:
+    def kthSmallestPath(self, destination: List[int], k: int) -> str:
+        rows, cols = destination
+        result = []
+        h, v = cols, rows
+        for _ in range(rows + cols):
+            if h == 0:
+                result.append('V')
+            elif v == 0:
+                result.append('H')
+            else:
+                count = comb(h + v - 1, h - 1)
+                if k <= count:
+                    result.append('H')
+                    h -= 1
+                else:
+                    k -= count
+                    result.append('V')
+                    v -= 1
+        return ''.join(result)

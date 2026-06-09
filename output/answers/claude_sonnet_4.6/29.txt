@@ -1,0 +1,29 @@
+from typing import List
+from math import ceil
+from functools import lru_cache
+
+class Solution:
+    def minimumTime(self, power: List[int]) -> int:
+        n = len(power)
+        
+        @lru_cache(maxsize=None)
+        def dp(mask):
+            if mask == 0:
+                return 0
+            killed = bin(mask).count('1')
+            gain = killed + 1  # gain before killing next (after killing `killed` monsters)
+            # We need to kill one more monster from remaining
+            # gain when we start this phase = killed + 1
+            best = float('inf')
+            remaining = [(1 << n) - 1] ^ mask  # bits already killed
+            for i in range(n):
+                if mask & (1 << i):  # monster i still alive
+                    # gain at this point = n - killed (monsters killed so far = n - bin(mask).count('1'))
+                    # Actually: monsters killed so far = n - killed (where killed = bits in mask)
+                    g = n - killed  # gain when approaching this monster
+                    days = ceil(power[i] / g)
+                    best = min(best, days + dp(mask ^ (1 << i)))
+            return best
+        
+        full_mask = (1 << n) - 1
+        return dp(full_mask)

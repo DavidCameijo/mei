@@ -1,0 +1,27 @@
+import math
+
+class Solution:
+    def kthSmallestPath(self, destination: List[int], k: int) -> str:
+        v_steps, h_steps = destination
+        res = []
+        
+        for i in range(v_steps + h_steps):
+            if h_steps > 0:
+                # If we pick 'H' at this position, we calculate how many
+                # combinations follow this 'H'.
+                # Total remaining slots is (v_steps + h_steps - 1)
+                # Remaining 'V' steps to place is v_steps
+                count = math.comb(h_steps + v_steps - 1, v_steps)
+                
+                if k <= count:
+                    res.append('H')
+                    h_steps -= 1
+                else:
+                    res.append('V')
+                    k -= count
+                    v_steps -= 1
+            else:
+                res.append('V')
+                v_steps -= 1
+                
+        return "".join(res)

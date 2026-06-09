@@ -1,0 +1,59 @@
+from typing import List
+
+class Solution:
+    def minimumMoves(self, nums: List[int], k: int, maxChanges: int) -> int:
+        n = len(nums)
+        
+        # Action 1 (setting nums[j]=1) followed by Action 2 (swapping to aliceIndex)
+        # takes exactly 2 moves to get 1 additional "one".
+        # We can use this for up to maxChanges ones.
+        
+        # Check maximum ones we can get with 0, 1, or 2 moves based on proximity
+        max_adjacent = 0
+        for i in range(n):
+            if nums[i] == 0: continue
+            cnt = 1
+            if i > 0 and nums[i-1] == 1: cnt += 1
+            if i < n - 1 and nums[i+1] == 1: cnt += 1
+            max_adjacent = max(max_adjacent, cnt)
+        
+        # Cases where we need very few moves per "one"
+        count_in_three = min(k, max_adjacent)
+        if count_in_three + maxChanges >= k:
+            # We prioritize getting ones in 0 moves, then 1 move, then 2 moves
+            # (max_adjacent covers 0 and 1 moves).
+            # 0 moves: at aliceIndex
+            # 1 move: at aliceIndex-1 or aliceIndex+1
+            # 2 moves: maxChanges
+            res = max(0, count_in_three - 1)
+            remaining = k - count_in_three
+            return res + 2 * remaining
+        
+        # If we still need more ones, we find the densest cluster of existing ones
+        pos = [i for i, v in enumerate(nums) if v == 1]
+        m = len(pos)
+        
+        # We need to pick (k - maxChanges) ones from the existing ones.
+        target_k = k - maxChanges
+        prefix_sum = [0] * (m + 1)
+        for i in range(m):
+            prefix_sum[i+1] = prefix_sum[i] + pos[i]
+            
+        min_total_dist = float('inf')
+        
+        # Sliding window of size target_k
+        for i in range(m - target_k + 1):
+            left = i
+            right = i + target_k - 1
+            mid = (left + right) // 2
+            
+            # Median-based distance calculation
+            left_count = mid - left
+            right_count = right - mid
+            
+            left_dist = pos[mid] * left_count - (prefix_sum[mid] - prefix_sum[left])
+            right_dist = (prefix_sum[right + 1] - prefix_sum[mid + 1]) - pos[mid] * right_count
+            
+            min_total_dist = min(min_total_dist, left_dist + right_dist)
+            
+        return min_total_dist + 2 * maxChanges
